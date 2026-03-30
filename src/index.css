@@ -1,7 +1,11 @@
+/* Utility for password input with icon (for RTL, icon on left, lock on right) */
+.password-input-with-icon {
+  direction: rtl;
+}
 @import "tailwindcss";
 
 * {
-  font-size: 14.5px;
+  font-size: var(--appFontSize, 15px);
   font-family: "Cairo", sans-serif;
 }
 /* Light Mode Defaults (Reference) */

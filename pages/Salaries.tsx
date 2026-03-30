@@ -3,7 +3,6 @@ import SalariesTable from "../ui/Salaries/SalariesTable";
 
 function SponserShips() {
   return (
-    <>
       <div className="mx-8 mb-8">
         <div className="mt-8 mr-2 mb-8 flex flex-col items-end">
           <h1 className="mb-8 text-2xl font-semibold ">
@@ -16,7 +15,6 @@ function SponserShips() {
         </div>
         <SalariesTable />
       </div>
-    </>
   );
 }
 
