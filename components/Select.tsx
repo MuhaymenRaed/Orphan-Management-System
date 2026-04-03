@@ -16,7 +16,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   return (
     <motion.select
-      className={`rounded-lg border border-(--borderColor) bg-(--backgroundColor) px-4 py-2 text-(--textColor) focus:outline-none focus:ring-2 focus:ring-(--primeColor) ${className || ""}`}
+      className={`rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] px-3.5 py-2.5 text-sm text-[var(--textColor)] focus:outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200 ${className || ""}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       whileFocus={{ scale: 1.04 }}

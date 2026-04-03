@@ -1,138 +1,182 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/Button";
 import "../src/index.css";
-
-import { UserPlus, Mail, Lock } from "lucide-react";
-
-import { useState } from "react";
+import { UserPlus, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { signUp } from "../utils/Supabase/auth/signup";
-import { Eye, EyeOff } from "lucide-react";
 
 const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
+    if (!fullName.trim()) {
+      setError("يرجى إدخال الاسم الكامل");
+      return;
+    }
+    if (fullName.trim().length < 3) {
+      setError("الاسم يجب أن يكون 3 أحرف على الأقل");
+      return;
+    }
+    if (!email.trim()) {
+      setError("يرجى إدخال البريد الإلكتروني");
+      return;
+    }
+    if (!isEmailValid) {
+      setError("يرجى إدخال بريد إلكتروني صحيح (مثال: name@email.com)");
+      return;
+    }
+    if (!password) {
+      setError("يرجى إدخال كلمة المرور");
+      return;
+    }
+    if (password.length < 6) {
+      setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("كلمتا المرور غير متطابقتين");
+      return;
+    }
     setLoading(true);
     try {
-      await signUp({ email, password });
+      await signUp({
+        email: email.trim(),
+        password,
+        fullName: fullName.trim(),
+      });
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || "حدث خطأ");
+      setError(err.message || "حدث خطأ غير متوقع");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div dir="rtl" className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-(--primeColor)/10 via-(--fillColor)/60 to-(--backgroundColor)">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white/90 dark:bg-(--backgroundColor)/90 rounded-3xl shadow-2xl border border-(--borderColor) backdrop-blur-lg">
-        <div className="flex flex-col items-center gap-2">
-          <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-tr from-(--primeColor)/80 to-(--fillColor)/80 shadow-lg mb-2">
-            <UserPlus size={32} className="text-white drop-shadow" />
+    <div
+      dir="rtl"
+      className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[var(--primeColor)]/5 via-[var(--fillColor)]/40 to-[var(--backgroundColor)]"
+    >
+      <div className="w-full max-w-md p-7 md:p-8 space-y-6 bg-[var(--backgroundColor)] rounded-2xl shadow-[var(--cardShadow)] border border-[var(--borderColor)] animate-fadeIn">
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--primeColor)]/10 mb-1">
+            <UserPlus size={28} className="text-[var(--primeColor)]" />
           </span>
-          <h2 className="text-3xl font-extrabold text-center text-(--primeColor) tracking-tight">
+          <h2 className="text-2xl font-bold text-[var(--textColor)]">
             إنشاء حساب جديد
           </h2>
-          <p className="text-sm text-center text-(--textMuted)">
+          <p className="text-xs text-[var(--textMuted)]">
             ابدأ رحلتك معنا! الرجاء تعبئة البيانات لإنشاء حسابك.
           </p>
         </div>
-        <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
+        <form className="space-y-4 mt-2" onSubmit={handleSubmit}>
           <div className="relative">
             <UserPlus
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-(--primeColor) opacity-70"
-              size={20}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--primeColor)] opacity-60"
+              size={18}
             />
             <input
               type="text"
               placeholder="الاسم الكامل"
-              className="w-full pl-4 pr-12 py-3 rounded-xl border border-(--borderColor) bg-(--fillColor) text-(--textColor) focus:outline-none focus:ring-2 focus:ring-(--primeColor) shadow-sm transition"
-              required
+              className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] text-sm text-[var(--textColor)] focus:outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
           <div className="relative">
             <Mail
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-(--primeColor) opacity-70"
-              size={20}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--primeColor)] opacity-60"
+              size={18}
             />
             <input
               type="email"
               placeholder="البريد الإلكتروني"
-              className="w-full pl-4 pr-12 py-3 rounded-xl border border-(--borderColor) bg-(--fillColor) text-(--textColor) focus:outline-none focus:ring-2 focus:ring-(--primeColor) shadow-sm transition"
-              required
+              className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] text-sm text-[var(--textColor)] focus:outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="relative flex items-center">
             <Lock
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-(--primeColor) opacity-70 pointer-events-none"
-              size={20}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--primeColor)] opacity-60 pointer-events-none"
+              size={18}
             />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="كلمة المرور"
-              className="w-full pl-4 pr-12 py-3 rounded-xl border border-(--borderColor) bg-(--fillColor) text-(--textColor) focus:outline-none focus:ring-2 focus:ring-(--primeColor) shadow-sm transition password-input-with-icon"
-              required
+              placeholder="كلمة المرور (6 أحرف على الأقل)"
+              className="w-full px-11 py-2.5 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] text-sm text-[var(--textColor)] focus:outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
-              style={{ paddingLeft: "3rem", paddingRight: "3rem" }}
             />
             <button
               type="button"
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-(--primeColor) opacity-70 hover:opacity-100 transition focus:outline-none"
-              tabIndex={0}
-              aria-label={
-                showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"
-              }
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--textMuted)] hover:text-[var(--primeColor)] transition-colors"
+              tabIndex={-1}
               onClick={() => setShowPassword((v) => !v)}
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                margin: 0,
-                lineHeight: 1,
-              }}
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="relative">
+            <Lock
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--primeColor)] opacity-60"
+              size={18}
+            />
+            <input
+              type="password"
+              placeholder="تأكيد كلمة المرور"
+              className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] text-sm text-[var(--textColor)] focus:outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+          </div>
+          {error && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-[var(--errorColor)]/10 border border-[var(--errorColor)]/20">
+              <AlertCircle
+                size={16}
+                className="text-[var(--errorColor)] shrink-0"
+              />
+              <p className="text-[var(--errorColor)] text-xs">{error}</p>
+            </div>
+          )}
           {success && (
-            <p className="text-green-600">
-              تم إرسال رابط التحقق إلى بريدك الإلكتروني
-            </p>
+            <div className="p-3 rounded-xl bg-[var(--successColor)]/10 border border-[var(--successColor)]/20">
+              <p className="text-[var(--successColor)] text-xs">
+                تم إرسال رابط التحقق إلى بريدك الإلكتروني، يرجى التحقق من البريد
+                الوارد
+              </p>
+            </div>
           )}
           <Button
             type="submit"
-            adj="w-full py-3 rounded-xl bg-gradient-to-tr from-[var(--primeColor)] to-emerald-400 text-white font-bold text-lg shadow-lg hover:brightness-110 transition-all"
+            adj="w-full py-2.5 rounded-xl bg-[var(--primeColor)] text-white font-bold text-sm shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
             disabled={loading}
           >
             {loading ? "جاري التسجيل..." : "إنشاء حساب"}
           </Button>
         </form>
-        <div className="text-center pt-2">
-          <span className="text-sm text-(--textMuted)">
+        <div className="text-center">
+          <span className="text-xs text-[var(--textMuted)]">
             لديك حساب بالفعل؟{" "}
-            <Button
-              type="button"
-              adj="text-(--primeColor) font-semibold hover:underline bg-transparent p-0 m-0 shadow-none"
-              onClick={() => (window.location.href = "/signin")}
+            <a
+              href="/signin"
+              className="text-[var(--primeColor)] font-semibold hover:underline"
             >
               تسجيل الدخول
-            </Button>
+            </a>
           </span>
         </div>
       </div>

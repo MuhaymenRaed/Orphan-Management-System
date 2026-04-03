@@ -67,7 +67,7 @@ function UsersTableContent() {
         <DataTable.SearchInput placeholder="بحث عن مستخدم..." />
         <DataTable.Filter label="تصفية حسب الحالة" options={FILTER_OPTIONS} />
         <Button
-          adj="bg-(--primeColor) text-white px-4 py-2 rounded hover:bg-(--primeColor)/90"
+          adj="bg-[var(--primeColor)] text-white px-4 py-2 rounded hover:bg-[var(--primeColor)]/90"
           onClick={handleAdd}
         >
           إضافة مستخدم
@@ -97,13 +97,13 @@ function UsersTableContent() {
           renderRow={(user: any) => (
             <DataTable.TableRow key={user.id}>
               <DataTable.TableCell>
-                <span className="font-bold text-lg text-(--primeColor)">
+                <span className="font-bold text-lg text-[var(--primeColor)]">
                   {user.full_name}
                 </span>
               </DataTable.TableCell>
               <DataTable.TableCell>{user.email}</DataTable.TableCell>
               <DataTable.TableCell>
-                <span className="rounded px-2 py-1 bg-(--fillColor)/60 text-xs font-semibold">
+                <span className="rounded px-2 py-1 bg-[var(--fillColor)]/60 text-xs font-semibold">
                   {user.role || user.app_role}
                 </span>
               </DataTable.TableCell>

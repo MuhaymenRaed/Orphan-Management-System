@@ -12,10 +12,8 @@ function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
         className={`
           ${sizes[size]} 
           animate-spin rounded-full 
-          /* Corrected: Use square brackets for CSS variables in Tailwind */
           border-[var(--primeColor)] 
-          border-t-transparent 
-          shadow-sm
+          border-t-transparent
         `}
       />
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { MailCheck } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -17,29 +17,32 @@ export default function VerifyEmail() {
   }, [searchParams]);
 
   return (
-    <div dir="rtl" className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-(--primeColor)/10 via-(--fillColor)/60 to-(--backgroundColor)">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white/90 dark:bg-(--backgroundColor)/90 rounded-3xl shadow-2xl border border-(--borderColor) backdrop-blur-lg">
-        <div className="flex flex-col items-center gap-2">
-          <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-tr from-(--primeColor)/80 to-(--fillColor)/80 shadow-lg mb-2">
-            <MailCheck size={32} className="text-white drop-shadow" />
+    <div
+      dir="rtl"
+      className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[var(--primeColor)]/5 via-[var(--fillColor)]/40 to-[var(--backgroundColor)]"
+    >
+      <div className="w-full max-w-md p-7 md:p-8 space-y-6 bg-[var(--backgroundColor)] rounded-2xl shadow-[var(--cardShadow)] border border-[var(--borderColor)] animate-fadeIn">
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--primeColor)]/10 mb-1">
+            <MailCheck size={28} className="text-[var(--primeColor)]" />
           </span>
           {status === "success" ? (
             <>
-              <h2 className="text-2xl font-extrabold text-center text-(--primeColor) tracking-tight mb-2">
+              <h2 className="text-xl font-bold text-[var(--textColor)]">
                 تم تفعيل بريدك الإلكتروني بنجاح
               </h2>
-              <p className="text-sm text-center text-(--textMuted)">
+              <p className="text-xs text-[var(--textMuted)]">
                 يمكنك الآن تسجيل الدخول إلى حسابك.
               </p>
             </>
           ) : (
-            <h2 className="text-xl text-center text-(--primeColor)">
+            <h2 className="text-lg font-bold text-[var(--textColor)]">
               جاري التحقق من بريدك الإلكتروني...
             </h2>
           )}
         </div>
         <Button
-          adj="w-full py-3 rounded-xl bg-gradient-to-tr from-[var(--primeColor)] to-emerald-400 text-white font-bold text-lg shadow-lg hover:brightness-110 transition-all"
+          adj="w-full py-2.5 rounded-xl bg-[var(--primeColor)] text-white font-bold text-sm shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
           onClick={() => navigate("/signin")}
         >
           العودة لتسجيل الدخول

@@ -1,8 +1,9 @@
-import { useMemo } from "react";
-import { SquarePen, Plus, CreditCard } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { SquarePen, Plus, CreditCard, StickyNote } from "lucide-react";
 import { DataTable } from "../../components/CompoundTable";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useGetSalaries } from "../../utils/ReactQuerry/Salaries/useGetSalaries";
+import { useUpdateSalaryNote } from "../../utils/ReactQuerry/Salaries/useUpdateSalaries";
 import SalaryModal from "./SalariesModal";
 
 interface SalaryRecord {
@@ -12,6 +13,7 @@ interface SalaryRecord {
   amount: number;
   payment_date: string;
   status: "مدفوع" | "قيد الانتظار" | "متوقف";
+  note?: string;
 }
 
 // 1. Define Filter Options for Salaries
@@ -23,10 +25,23 @@ const SALARY_FILTERS = [
 
 function SalariesTableContent() {
   const { data: salaries, isLoading, isError } = useGetSalaries();
+  const { updateNote } = useUpdateSalaryNote();
 
   // 2. Extract filterValue from context
   const { searchQuery, filterValue, setIsModalOpen, editItem, setEditItem } =
     DataTable.useContext();
+
+  const [notes, setNotes] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    if (salaries) {
+      const initialNotes: Record<number, string> = {};
+      salaries.forEach((s: SalaryRecord) => {
+        initialNotes[s.payment_id] = s.note || "";
+      });
+      setNotes(initialNotes);
+    }
+  }, [salaries]);
 
   // 3. Combined Filtering Logic
   const filteredSalaries = useMemo(() => {
@@ -116,6 +131,9 @@ function SalariesTableContent() {
             <DataTable.TableHeaderCell className="text-center">
               الإجراءات
             </DataTable.TableHeaderCell>
+            <DataTable.TableHeaderCell className="w-1/4 min-w-[150px]">
+              الملاحظات
+            </DataTable.TableHeaderCell>
           </DataTable.TableRow>
         </DataTable.TableHead>
 
@@ -186,6 +204,38 @@ function SalariesTableContent() {
                   >
                     <SquarePen size={18} />
                   </button>
+                </div>
+              </DataTable.TableCell>
+
+              <DataTable.TableCell>
+                <div className="relative group">
+                  <textarea
+                    rows={1}
+                    className="w-full text-xs text-[var(--textColor)] bg-[var(--borderColor)] border border-transparent rounded-lg px-2 py-2 
+                      hover:border-[var(--primeColor)] focus:bg-[var(--fillColor)] focus:border-[var(--primeColor)] 
+                      focus:ring-2 focus:ring-[var(--primeColor)]/10 resize-none overflow-hidden"
+                    value={notes[salary.payment_id] || ""}
+                    placeholder="ملاحظة..."
+                    maxLength={90}
+                    onChange={(e) => {
+                      setNotes((prev) => ({
+                        ...prev,
+                        [salary.payment_id]: e.target.value,
+                      }));
+                      e.target.style.height = "auto";
+                      e.target.style.height = `${e.target.scrollHeight}px`;
+                    }}
+                    onBlur={() =>
+                      updateNote({
+                        id: salary.payment_id,
+                        note: notes[salary.payment_id] || "",
+                      })
+                    }
+                  />
+                  <StickyNote
+                    size={12}
+                    className="absolute left-2 top-2.5 opacity-0 group-hover:opacity-30 pointer-events-none transition-opacity"
+                  />
                 </div>
               </DataTable.TableCell>
             </DataTable.TableRow>

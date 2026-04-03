@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Handshake,
-  Users as UsersIcon,
-  DollarSign,
-  Heart,
-  Baby,
-} from "lucide-react";
+import { Users as UsersIcon, DollarSign, Heart, Baby } from "lucide-react";
 import Card from "../components/Card";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useGetOrphans } from "../utils/ReactQuerry/Orphans/useGetOrphans";
@@ -27,18 +21,26 @@ import {
 } from "recharts";
 
 function Overview() {
-  const { data: orphansData, isLoading: orphansLoading } = useGetOrphans();
-  const { data: sponsorStats, isLoading: sponsorsLoading } = useSponsorStats();
-  const { data: sponsorships, isLoading: sponsorshipsLoading } =
-    useGetSponsorships();
-  const { data: salaries, isLoading: salariesLoading } = useGetSalaries();
-  const { data: users, isLoading: usersLoading } = useGetUsers();
+  const {
+    data: orphansData,
+    isLoading: orphansLoading,
+  } = useGetOrphans();
+  const {
+    data: sponsorStats,
+    isLoading: sponsorsLoading,
+  } = useSponsorStats();
+  const {
+    data: sponsorships,
+    isLoading: sponsorshipsLoading,
+  } = useGetSponsorships();
+  const {
+    data: salaries,
+    isLoading: salariesLoading,
+  } = useGetSalaries();
+  const { isLoading: usersLoading } = useGetUsers();
 
   // Stats
   const totalOrphans = orphansData?.orphan?.length ?? 0;
-  const sponsoredOrphans =
-    orphansData?.orphan?.filter((o: any) => o.is_sponsored).length ?? 0;
-  const unsponsoredOrphans = totalOrphans - sponsoredOrphans;
   const totalSponsors = sponsorStats?.totalSponsors ?? 0;
   const totalSponsorships = sponsorStats?.totalSponsorships ?? 0;
   const totalSalaries =
@@ -57,25 +59,24 @@ function Overview() {
   const getPriorityBadge = (priority: number) => {
     if (priority >= 80) {
       return (
-        <span className="bg-red-100 text-red-500 px-5 py-2 rounded-full font-bold text-lg">
+        <span className="bg-[var(--errorColor)]/10 text-[var(--errorColor)] px-3 py-1 rounded-full font-bold text-xs">
           عالية
         </span>
       );
     } else if (priority >= 60) {
       return (
-        <span className="bg-yellow-100 text-yellow-600 px-5 py-2 rounded-full font-bold text-lg">
+        <span className="bg-[var(--warningColor)]/10 text-[var(--warningColor)] px-3 py-1 rounded-full font-bold text-xs">
           متوسطة
         </span>
       );
     } else {
       return (
-        <span className="bg-green-100 text-green-600 px-5 py-2 rounded-full font-bold text-lg">
+        <span className="bg-[var(--successColor)]/10 text-[var(--successColor)] px-3 py-1 rounded-full font-bold text-xs">
           منخفضة
         </span>
       );
     }
   };
-  const totalUsers = users?.length ?? 0;
 
   // Pie chart: aggregate real sponsorship types
   const sponsorshipTypes = React.useMemo(() => {
@@ -110,8 +111,8 @@ function Overview() {
     });
     // Count sponsors per month (if available)
     let sponsorCounts: Record<string, number> = {};
-    if (Array.isArray(sponsorStats?.sponsors)) {
-      sponsorStats.sponsors.forEach((s: any) => {
+    if (Array.isArray((sponsorStats as any)?.sponsors)) {
+      (sponsorStats as any).sponsors.forEach((s: any) => {
         if (!s.created_at) return;
         const d = new Date(s.created_at);
         const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
@@ -137,13 +138,13 @@ function Overview() {
     usersLoading;
 
   return (
-    <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[var(--backgroundColor)]">
+    <div className="flex flex-col gap-6 px-4 md:px-8 py-6 bg-[var(--backgroundColor)] min-h-screen">
       {loading ? (
         <LoadingSpinner size="md" />
       ) : (
         <>
           {/* Summary Cards */}
-          <ul className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full max-w-6xl">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-6xl mx-auto">
             <Card>
               <div className="flex items-center gap-4 w-full">
                 <span className="p-3 bg-[var(--fillColor)] rounded-xl text-[var(--primeColor)]">
@@ -218,9 +219,9 @@ function Overview() {
             </Card>
           </ul>
           {/* Charts and more sections can be added here using recharts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl mt-8">
-            <div className="bg-white/90 dark:bg-(--backgroundColor)/90 rounded-3xl shadow-2xl border border-(--borderColor) p-6">
-              <h2 className="text-lg font-bold mb-4 text-(--primeColor)">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-6xl mx-auto">
+            <div className="bg-[var(--backgroundColor)] rounded-2xl shadow-[var(--cardShadow)] border border-[var(--borderColor)] p-5">
+              <h2 className="text-sm font-bold mb-3 text-[var(--primeColor)]">
                 توزيع الكفالات
               </h2>
               <ResponsiveContainer width="100%" height={260}>
@@ -234,7 +235,7 @@ function Overview() {
                     outerRadius={90}
                     label={({ name, value }) => `${name}: ${value}`}
                   >
-                    {sponsorshipTypes.map((entry, idx) => (
+                    {sponsorshipTypes.map((_entry, idx) => (
                       <Cell
                         key={`cell-${idx}`}
                         fill={COLORS[idx % COLORS.length]}
@@ -245,8 +246,8 @@ function Overview() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="bg-white/90 dark:bg-(--backgroundColor)/90 rounded-3xl shadow-2xl border border-(--borderColor) p-6">
-              <h2 className="text-lg font-bold mb-4 text-(--primeColor)">
+            <div className="bg-[var(--backgroundColor)] rounded-2xl shadow-[var(--cardShadow)] border border-[var(--borderColor)] p-5">
+              <h2 className="text-sm font-bold mb-3 text-[var(--primeColor)]">
                 الإحصائيات الشهرية
               </h2>
               <ResponsiveContainer width="100%" height={260}>
@@ -275,20 +276,20 @@ function Overview() {
             </div>
           </div>
           {/* Urgent cases section */}
-          <div className="w-full max-w-6xl mt-8">
-            <div className="bg-[var(--backgroundColor)] rounded-3xl shadow-2xl border border-[var(--borderColor)] p-8 flex flex-col gap-6">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-2xl font-bold text-right text-[var(--textColor)]">
+          <div className="w-full max-w-6xl mx-auto">
+            <div className="bg-[var(--backgroundColor)] rounded-2xl shadow-[var(--cardShadow)] border border-[var(--borderColor)] p-5 md:p-6 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-right text-[var(--textColor)]">
                   حالات تحتاج اهتمام عاجل
                 </h2>
-                <span className="bg-red-100 text-red-500 p-3 rounded-full">
+                <span className="bg-[var(--errorColor)]/10 text-[var(--errorColor)] p-2 rounded-xl">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-7 h-7"
+                    className="w-5 h-5"
                   >
                     <path
                       strokeLinecap="round"
@@ -300,24 +301,24 @@ function Overview() {
               </div>
               {/* Urgent (high) priority cases */}
               {[...urgentCases, ...mediumCases].length === 0 ? (
-                <div className="text-center text-lg text-[var(--textMuted2)] py-8">
+                <div className="text-center text-sm text-[var(--textMuted)] py-6">
                   لا توجد حالات عاجلة حالياً
                 </div>
               ) : (
                 [...urgentCases, ...mediumCases].map(
-                  (orphan: any, idx: number) => (
+                  (orphan: any, _idx: number) => (
                     <div
                       key={orphan.id}
-                      className="flex flex-row-reverse items-center justify-between bg-[var(--backgroundColor)] rounded-2xl p-6 mb-2 border border-[var(--borderColor)]/40"
+                      className="flex flex-row-reverse items-center justify-between bg-[var(--fillColor)] rounded-xl p-4 border border-[var(--borderColor)]/40"
                     >
-                      <div className="flex flex-col items-end gap-1 text-right">
-                        <span className="font-bold text-xl text-[var(--textColor)]">
+                      <div className="flex flex-col items-end gap-0.5 text-right">
+                        <span className="font-bold text-sm text-[var(--textColor)]">
                           {orphan.name}{" "}
-                          <span className="text-[var(--textMuted2)] text-base font-normal">
+                          <span className="text-[var(--textMuted)] text-xs font-normal">
                             ({orphan.age} سنة)
                           </span>
                         </span>
-                        <span className="text-md text-[var(--textMuted2)]">
+                        <span className="text-xs text-[var(--textMuted)]">
                           {orphan.type ||
                             orphan.description ||
                             orphan.residence ||

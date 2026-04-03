@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSalary } from "../../Supabase/Salaries/updateSalary";
+import {
+  updateSalary,
+  updateSalaryNote,
+} from "../../Supabase/Salaries/updateSalary";
 import { toast } from "react-hot-toast";
 
 export function useUpdateSalary() {
@@ -9,7 +12,6 @@ export function useUpdateSalary() {
     mutationFn: updateSalary,
     onSuccess: () => {
       toast.success("تم تحديث بيانات الراتب بنجاح!");
-      // ✅ Invalidate and refetch immediately
       queryClient.invalidateQueries({
         queryKey: ["salaries"],
       });
@@ -25,4 +27,25 @@ export function useUpdateSalary() {
   });
 
   return { updateSalaryMutate, isPending };
+}
+
+export function useUpdateSalaryNote() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateSalaryNote,
+    onSuccess: () => {
+      toast.success("تم تحديث الملاحظة بنجاح!");
+      queryClient.invalidateQueries({ queryKey: ["salaries"] });
+    },
+    onError: (error) => {
+      toast.error("فشل في تحديث الملاحظة!");
+      console.error(error);
+    },
+  });
+
+  return {
+    updateNote: mutation.mutate,
+    isUpdating: mutation.isPending,
+  };
 }

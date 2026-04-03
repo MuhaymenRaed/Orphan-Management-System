@@ -1,54 +1,134 @@
-/* Utility for password input with icon (for RTL, icon on left, lock on right) */
+@import "tailwindcss";
+
 .password-input-with-icon {
   direction: rtl;
 }
-@import "tailwindcss";
 
 * {
   font-size: var(--appFontSize, 15px);
   font-family: "Cairo", sans-serif;
 }
-/* Light Mode Defaults (Reference) */
+
 :root {
-  --backgroundColor: #f5f5f5;
-  --borderColor: #e0e0e0;
-  --primeColor: #4a7c59; /* Your Emerald Green */
+  --backgroundColor: #f8f9fb;
+  --borderColor: #e2e5ea;
+  --primeColor: #3d7a54;
+  --primeColorLight: #e8f5ee;
   --textColor: #161f2c;
   --iconColor: #1a2e1a;
   --subTextColor: #1e2939;
   --cellTextColor: #364153;
-  --fillColor: #ecfdf5;
+  --fillColor: #f0f4f2;
   --textMuted: #9ca3af;
   --textMuted2: #6a7282;
-  --errorColor: #e53e3e;
+  --errorColor: #dc3545;
+  --successColor: #28a745;
+  --warningColor: #f59e0b;
+  --cardShadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --cardShadowHover:
+    0 4px 12px 0 rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
 
-/* Elegant Dark Mode */
 .dark {
-  /* 1. Deepest base - using a dark navy-green tint instead of pure black */
-  --backgroundColor: #0a0f0d;
-
-  /* 2. Soft borders to prevent harsh lines */
-  --borderColor: #1e2923;
-
-  /* 3. Keep your prime green but slightly brighten for contrast on dark bg */
+  --backgroundColor: #0c1210;
+  --borderColor: #1e2d26;
   --primeColor: #5ea375;
-
-  /* 4. Text - use an off-white/emerald-tinted white for eye comfort */
+  --primeColorLight: #162a1e;
   --textColor: #e2e8f0;
   --subTextColor: #94a3b8;
   --cellTextColor: #cbd5e1;
-
-  /* 5. Fill color - used for table rows/inputs. 
-        A deep green-tinted charcoal looks premium here. */
-  --fillColor: #121d18;
-
-  /* 6. Muted text - lower opacity or grey-blue tints */
+  --fillColor: #131f19;
   --textMuted: #64748b;
   --textMuted2: #475569;
-
-  /* 7. Icon color - bright but soft */
   --iconColor: #9fdfbb;
-  /* 8. Error color - a rich red that stands out without being too harsh */
-  --errorColor: #e53e3e;
+  --errorColor: #ef4444;
+  --successColor: #4ade80;
+  --warningColor: #fbbf24;
+  --cardShadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  --cardShadowHover:
+    0 4px 16px 0 rgba(0, 0, 0, 0.3), 0 2px 6px -2px rgba(0, 0, 0, 0.25);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--borderColor);
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--textMuted);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+.animate-slideUp {
+  animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.25s ease-out;
+}
+.page-enter {
+  animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-card {
+  background: color-mix(in srgb, var(--fillColor) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primeColor) 0%, #6fcf97 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

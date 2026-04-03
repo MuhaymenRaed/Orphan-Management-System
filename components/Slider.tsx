@@ -26,7 +26,7 @@ const Slider: React.FC<SliderProps> = ({
       step={step}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
-      className={`w-full accent-(--primeColor) ${className || ""}`}
+      className={`w-full accent-[var(--primeColor)] ${className || ""}`}
       whileFocus={{ scale: 1.04 }}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}

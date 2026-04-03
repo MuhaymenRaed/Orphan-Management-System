@@ -24,7 +24,7 @@ function Button({
       onClick={onClick}
       className={`
         inline-flex items-center justify-center 
-        transition-all duration-200 
+        transition-all duration-200 cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed
         ${adj}
       `}

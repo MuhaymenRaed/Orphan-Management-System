@@ -13,7 +13,7 @@ export function useUpdateSettings() {
   return useMutation({
     mutationFn: updateSettings,
     onSuccess: () => {
-      queryClient.invalidateQueries(["settings"]);
+      queryClient.invalidateQueries({ queryKey: ["settings"] });
     },
   });
 }

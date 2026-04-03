@@ -3,7 +3,7 @@ import UsersTable from "../ui/UsersTable";
 
 const Users: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-start pt-10">
+    <div className="mx-4 md:mx-8 mb-8 pt-6 md:pt-10">
       <UsersTable />
     </div>
   );

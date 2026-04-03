@@ -1,20 +1,20 @@
 import "../src/index.css";
-import OrphansTable from "../ui/Orphans/OrphansTable";
+import OrphanReceivesTable from "../ui/OrphanReceives/OrphanReceivesTable";
 
-function Orphans() {
+function OrphanReceives() {
   return (
     <div className="mx-4 md:mx-8 mb-8">
       <div className="mt-6 md:mt-8 mr-2 mb-6 md:mb-8 flex flex-col items-end">
         <h1 className="mb-2 text-xl md:text-2xl font-bold text-[var(--textColor)]">
-          إدارة الأيتام
+          بيانات استلام الأيتام
         </h1>
         <p className="mb-4 text-[var(--subTextColor)] text-sm">
-          إضافة وإدارة بيانات الأيتام والمعايير التفضيلية
+          عرض بيانات الأيتام مع حالة الكفالة والكفلاء الحاليين
         </p>
       </div>
-      <OrphansTable />
+      <OrphanReceivesTable />
     </div>
   );
 }
 
-export default Orphans;
+export default OrphanReceives;

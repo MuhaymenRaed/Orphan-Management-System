@@ -5,5 +5,6 @@ export async function fetchOrphans() {
     .from("orphan")
     .select("*")
     .eq("is_deleted", false);
-  return { orphan, error };
+  if (error) throw error;
+  return { orphan };
 }

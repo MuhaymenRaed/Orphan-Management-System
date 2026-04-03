@@ -6,18 +6,15 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { Search, X, Filter, Check, ChevronDown } from "lucide-react"; // Added Icons
+import { Search, X, Filter, Check, ChevronDown } from "lucide-react";
 import Button from "./Button";
 import LoadingSpinner from "./LoadingSpinner";
 
-// 1. Strict Context Interface
 interface DataTableContextType {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  // New Filter State
   filterValue: string;
   setFilterValue: (value: string) => void;
-
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
   deleteConfirm: string | number | null;
@@ -37,7 +34,6 @@ const useDataTableContext = () => {
   return context;
 };
 
-// 2. Component Interfaces
 interface RootProps {
   children: ReactNode;
   dir?: "rtl" | "ltr";
@@ -52,18 +48,16 @@ interface SearchProps {
   onSearch?: (query: string) => void;
   className?: string;
 }
-// NEW: Filter Interfaces
 interface FilterOption {
   label: string;
   value: string;
 }
 interface FilterProps {
-  label?: string; // e.g., "Filter by Status"
+  label?: string;
   options: FilterOption[];
   onChange?: (value: string) => void;
   className?: string;
 }
-
 interface AddButtonProps {
   label: string;
   onClick?: () => void;
@@ -83,10 +77,9 @@ interface TableCellProps {
   className?: string;
 }
 
-// 3. Implementation
 const Root = ({ children, dir = "rtl", className = "" }: RootProps) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterValue, setFilterValue] = useState("all"); // Default filter state
+  const [filterValue, setFilterValue] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | number | null>(
     null,
@@ -110,7 +103,7 @@ const Root = ({ children, dir = "rtl", className = "" }: RootProps) => {
     >
       <div
         dir={dir}
-        className={`w-full rounded-2xl md:rounded-3xl border border-[var(--borderColor)] bg-[var(--fillColor)]/30 p-3 md:p-6 ${className}`}
+        className={`w-full rounded-2xl border border-[var(--borderColor)] bg-[var(--backgroundColor)] p-4 md:p-6 shadow-[var(--cardShadow)] animate-fadeIn ${className}`}
       >
         {children}
       </div>
@@ -120,16 +113,14 @@ const Root = ({ children, dir = "rtl", className = "" }: RootProps) => {
 
 const Header = ({ children, className = "" }: HeaderProps) => (
   <div
-    className={`mb-6 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between ${className}`}
+    className={`mb-5 flex flex-col-reverse gap-3 md:flex-row md:items-center md:justify-between ${className}`}
   >
-    {/* Helper div to group Search and Filter together on the left/right depending on dir */}
     <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
       {children}
     </div>
   </div>
 );
 
-// --- NEW FILTER COMPONENT ---
 const FilterSelect = ({
   label = "تصفية",
   options,
@@ -140,7 +131,6 @@ const FilterSelect = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -164,50 +154,49 @@ const FilterSelect = ({
     options.find((o) => o.value === filterValue)?.label || label;
 
   return (
-    <div ref={containerRef} className={`relative min-w-[150px] ${className}`}>
+    <div ref={containerRef} className={`relative min-w-[140px] ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between gap-2 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] px-4 py-3 md:py-2 text-sm text-[var(--textColor)] hover:border-[var(--primeColor)] transition-colors"
+        className="flex w-full items-center justify-between gap-2 rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] px-3.5 py-2.5 md:py-2 text-sm text-[var(--textColor)] hover:border-[var(--primeColor)]/50 transition-all duration-200"
       >
         <div className="flex items-center gap-2">
-          <Filter size={16} className="text-[var(--textMuted)]" />
-          <span>{filterValue === "all" ? label : currentLabel}</span>
+          <Filter size={15} className="text-[var(--textMuted)]" />
+          <span className="text-xs">
+            {filterValue === "all" ? label : currentLabel}
+          </span>
         </div>
         <ChevronDown
-          size={14}
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+          size={13}
+          className={`transition-transform duration-200 text-[var(--textMuted)] ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 z-50 w-full min-w-[180px] origin-top-right rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] shadow-lg p-1 animate-in fade-in zoom-in-95 duration-200">
-          {/* Option to clear filter */}
+        <div className="absolute top-full mt-1.5 z-50 w-full min-w-[170px] rounded-xl border border-[var(--borderColor)] bg-[var(--backgroundColor)] shadow-lg p-1 animate-scaleIn">
           <button
             onClick={() => handleSelect("all")}
-            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs transition-colors ${
               filterValue === "all"
-                ? "bg-[var(--primeColor)]/10 text-[var(--primeColor)]"
-                : "hover:bg-[var(--fillColor)]/50 text-[var(--textColor)]"
+                ? "bg-[var(--primeColor)]/10 text-[var(--primeColor)] font-bold"
+                : "hover:bg-[var(--fillColor)] text-[var(--textColor)]"
             }`}
           >
             <span>الكل</span>
-            {filterValue === "all" && <Check size={14} />}
+            {filterValue === "all" && <Check size={13} />}
           </button>
-
           <div className="my-1 h-px bg-[var(--borderColor)]/50" />
-
           {options.map((option) => (
             <button
               key={option.value}
               onClick={() => handleSelect(option.value)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs transition-colors ${
                 filterValue === option.value
-                  ? "bg-[var(--primeColor)]/10 text-[var(--primeColor)]"
-                  : "hover:bg-[var(--fillColor)]/50 text-[var(--textColor)]"
+                  ? "bg-[var(--primeColor)]/10 text-[var(--primeColor)] font-bold"
+                  : "hover:bg-[var(--fillColor)] text-[var(--textColor)]"
               }`}
             >
               <span>{option.label}</span>
-              {filterValue === option.value && <Check size={14} />}
+              {filterValue === option.value && <Check size={13} />}
             </button>
           ))}
         </div>
@@ -215,7 +204,6 @@ const FilterSelect = ({
     </div>
   );
 };
-// ----------------------------
 
 const SearchInput = ({
   placeholder = "البحث...",
@@ -229,10 +217,10 @@ const SearchInput = ({
   };
 
   return (
-    <div className={`relative w-full md:max-w-md ${className}`}>
+    <div className={`relative w-full md:max-w-sm ${className}`}>
       <Search
-        size={18}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--iconColor)]"
+        size={16}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--textMuted)]"
       />
       <input
         type="text"
@@ -242,14 +230,14 @@ const SearchInput = ({
           onSearch?.(e.target.value);
         }}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] px-10 py-3 md:py-2 text-sm text-[var(--textColor)] outline-none focus:ring-2 focus:ring-[var(--primeColor)] transition-all"
+        className="w-full rounded-xl border border-[var(--borderColor)] bg-[var(--fillColor)] px-9 py-2.5 md:py-2 text-xs text-[var(--textColor)] outline-none focus:border-[var(--primeColor)] focus:ring-2 focus:ring-[var(--primeColor)]/20 transition-all duration-200 placeholder:text-[var(--textMuted)]"
       />
       {searchQuery && (
         <button
           onClick={handleX}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--textMuted)] hover:text-red-500"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--textMuted)] hover:text-[var(--errorColor)] transition-colors"
         >
-          <X size={16} />
+          <X size={14} />
         </button>
       )}
     </div>
@@ -259,22 +247,21 @@ const SearchInput = ({
 const AddButton = ({ label, onClick, className = "" }: AddButtonProps) => {
   const { setIsModalOpen, setEditItem } = useDataTableContext();
   return (
-    // Moved ml-auto to Header logic or allow prop to override
     <Button
-      adj={`md:mr-auto inline-flex items-center gap-2 rounded-xl bg-[var(--primeColor)] px-6 py-3 md:py-2 text-white shadow-md hover:brightness-110 transition whitespace-nowrap ${className}`}
+      adj={`md:mr-auto inline-flex items-center gap-2 rounded-xl bg-[var(--primeColor)] px-5 py-2.5 md:py-2 text-white shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200 whitespace-nowrap ${className}`}
       onClick={() => {
         setEditItem(null);
         setIsModalOpen(true);
         onClick?.();
       }}
     >
-      <span className="font-bold text-sm">إضافة {label}</span>
+      <span className="font-bold text-xs">إضافة {label}</span>
     </Button>
   );
 };
 
 const Table = ({ children, className = "" }: TableProps) => (
-  <div className="w-full overflow-x-auto rounded-xl border border-[var(--borderColor)]/30 bg-[var(--backgroundColor)]/50 custom-scrollbar">
+  <div className="w-full overflow-x-auto rounded-xl border border-[var(--borderColor)]/50 custom-scrollbar">
     <table className={`min-w-full text-sm text-right ${className}`}>
       {children}
     </table>
@@ -282,22 +269,25 @@ const Table = ({ children, className = "" }: TableProps) => (
 );
 
 const ResultsCount = ({ count, total }: { count: number; total: number }) => (
-  <div className="text-sm text-[var(--textMuted)]">
-    عرض <span className="font-semibold text-[var(--textColor)]">{count}</span>{" "}
-    من <span className="font-semibold text-[var(--textColor)]">{total}</span>
+  <div className="mt-4 text-xs text-[var(--textMuted)] text-right">
+    عرض <span className="font-bold text-[var(--textColor)]">{count}</span> من{" "}
+    <span className="font-bold text-[var(--textColor)]">{total}</span>
   </div>
 );
 
 const Loading = () => (
-  <div className="flex justify-center items-center py-12">
+  <div className="flex justify-center items-center py-16">
     <LoadingSpinner />
   </div>
 );
 
 const ErrorMessage = ({ message }: { message: string }) => (
-  <div className="flex justify-center items-center py-12">
+  <div className="flex justify-center items-center py-16">
     <div className="text-center">
-      <p className="text-red-500 font-semibold">{message}</p>
+      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[var(--errorColor)]/10 flex items-center justify-center">
+        <X size={20} className="text-[var(--errorColor)]" />
+      </div>
+      <p className="text-[var(--errorColor)] font-bold text-sm">{message}</p>
     </div>
   </div>
 );
@@ -305,12 +295,12 @@ const ErrorMessage = ({ message }: { message: string }) => (
 function TableBody<T>({ data, renderRow, emptyMessage }: TableBodyProps<T>) {
   const { searchQuery } = useDataTableContext();
   return (
-    <tbody className="divide-y divide-[var(--borderColor)]/20">
+    <tbody className="divide-y divide-[var(--borderColor)]/30">
       {data.length === 0 ? (
         <tr>
           <td
             colSpan={100}
-            className="px-4 py-12 text-center text-[var(--textMuted2)]"
+            className="px-4 py-16 text-center text-[var(--textMuted2)] text-sm"
           >
             {searchQuery
               ? "لا توجد نتائج مطابقة لبحثك"
@@ -324,37 +314,34 @@ function TableBody<T>({ data, renderRow, emptyMessage }: TableBodyProps<T>) {
   );
 }
 
-// 4. Export Compound Object
 export const DataTable = {
   Root,
   Header,
   SearchInput,
-  Filter: FilterSelect, // Exporting the new component
+  Filter: FilterSelect,
   AddButton,
   Table,
   TableHead: ({ children, className = "" }: HeaderProps) => (
-    <thead className={`bg-[var(--fillColor)]/50 ${className}`}>
-      {children}
-    </thead>
+    <thead className={`bg-[var(--fillColor)] ${className}`}>{children}</thead>
   ),
   TableBody,
   TableHeaderCell: ({ children, className = "" }: HeaderProps) => (
     <th
-      className={`px-4 py-4 text-xs font-bold text-[var(--iconColor)] whitespace-nowrap ${className}`}
+      className={`px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-[var(--textMuted2)] whitespace-nowrap ${className}`}
     >
       {children}
     </th>
   ),
   TableRow: ({ children, className = "" }: HeaderProps) => (
     <tr
-      className={`hover:bg-[var(--fillColor)]/20 transition-colors ${className}`}
+      className={`hover:bg-[var(--fillColor)]/40 transition-colors duration-150 ${className}`}
     >
       {children}
     </tr>
   ),
   TableCell: ({ children, className = "" }: TableCellProps) => (
     <td
-      className={`px-4 py-4 whitespace-nowrap text-[var(--textColor)] ${className}`}
+      className={`px-4 py-3.5 whitespace-nowrap text-sm text-[var(--textColor)] ${className}`}
     >
       {children}
     </td>

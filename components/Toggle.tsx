@@ -37,7 +37,9 @@ const Toggle: React.FC<ToggleProps> = ({
           animate={{ x: checked ? 20 : 0 }}
         />
       </div>
-      {label && <span className="ml-3 text-(--textColor)">{label}</span>}
+      {label && (
+        <span className="ml-3 text-sm text-[var(--textColor)]">{label}</span>
+      )}
     </label>
   );
 };
