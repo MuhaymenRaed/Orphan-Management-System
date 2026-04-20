@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "../components/Button";
 import "../src/index.css";
 import { UserPlus, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { signUp } from "../utils/Supabase/auth/signup";
+import { signUp } from "../utils/Supabase/Auth/signup";
 
 const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState("");
