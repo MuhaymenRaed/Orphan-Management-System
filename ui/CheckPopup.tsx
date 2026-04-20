@@ -9,14 +9,14 @@ export default function CheckPopup({
 }) {
   return (
     <div
-      className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
       onClick={onCancel}
       style={{
         backgroundColor: "rgba(22, 31, 44, 0.5)",
       }}
     >
       <div
-        className="rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden animate-slideUp border"
+        className="rounded-t-3xl sm:rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden animate-slideUp border"
         onClick={(e) => e.stopPropagation()}
         dir="rtl"
         style={{
@@ -25,7 +25,7 @@ export default function CheckPopup({
         }}
       >
         {/* Header with Icon */}
-        <div className="px-8 pt-8 pb-6 flex flex-col items-center gap-4 relative bg-[var(--errorColor)]/20">
+        <div className="px-5 sm:px-8 pt-7 sm:pt-8 pb-5 sm:pb-6 flex flex-col items-center gap-4 relative bg-[var(--errorColor)]/20">
           <button
             onClick={onCancel}
             className="absolute left-6 top-6 transition-all hover:opacity-60"
@@ -52,7 +52,7 @@ export default function CheckPopup({
 
         {/* Content */}
         <div
-          className="px-8 py-6 border-t"
+          className="px-5 sm:px-8 py-5 sm:py-6 border-t"
           style={{ borderColor: "var(--borderColor)" }}
         >
           <p
@@ -71,12 +71,12 @@ export default function CheckPopup({
 
         {/* Action Buttons */}
         <div
-          className="px-8 pb-6 flex gap-3 border-t"
+          className="px-5 sm:px-8 pb-5 sm:pb-6 pt-4 flex flex-col-reverse sm:flex-row gap-3 border-t"
           style={{ borderColor: "var(--borderColor)" }}
         >
           <button
             onClick={onCancel}
-            className="flex-1 font-semibold py-3 px-6 rounded-lg border-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 font-semibold py-3 px-6 rounded-lg border-2 transition-all"
             style={{
               borderColor: "var(--borderColor)",
               color: "var(--textColor)",
@@ -86,7 +86,7 @@ export default function CheckPopup({
           </button>
           <button
             onClick={onClick}
-            className="flex-1 font-semibold py-3 px-6 rounded-lg text-white transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 font-semibold py-3 px-6 rounded-lg text-white transition-all"
             style={{
               backgroundColor: "var(--errorColor)",
             }}

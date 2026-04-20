@@ -52,8 +52,8 @@ const SignIn: React.FC = () => {
     try {
       await signIn({ email: email.trim(), password });
       setSuccess(true);
-      // AuthProvider's onAuthStateChange will update user state,
-      // and App.tsx will redirect authenticated users automatically.
+      // Navigate immediately — AuthProvider picks up the session via onAuthStateChange
+      navigate("/", { replace: true });
     } catch (err: any) {
       setError(err.message || "حدث خطأ غير متوقع");
     } finally {

@@ -52,11 +52,12 @@ export default function Header({
     setSigningOut(true);
     try {
       await signOut();
-      navigate("/signin");
     } catch {
-      // handled silently
+      // signOut already handles local fallback
     } finally {
       setSigningOut(false);
+      setShowDropdown(false);
+      navigate("/signin");
     }
   };
 

@@ -6,7 +6,7 @@ export const useOrphanLookup = () => {
     queryFn: async () => {
       const { data, error } = await supabase()
         .from("orphan")
-        .select("id, name") // Only fetch what we need
+        .select("id, name, is_sponsored")
         .eq("is_deleted", false);
       if (error) throw error;
       return data;

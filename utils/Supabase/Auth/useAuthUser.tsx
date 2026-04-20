@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -27,73 +27,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchRole = useCallback(async (authUser: User | null) => {
-    if (!authUser) {
-      setUser(null);
-      setRole(null);
-      setLoading(false);
-      return;
-    }
-    setUser(authUser);
-    try {
-      const { data: profile, error } = await supabase()
-        .from("profiles")
-        .select("role")
-        .eq("id", authUser.id)
-        .single();
-      if (error) throw error;
-      setRole((profile?.role as AppRole) || "user");
-    } catch {
-      // Profile may not exist yet (just signed up) — default to user
-      setRole("user");
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
     const client = supabase();
     let mounted = true;
+    let currentUid: string | null = null; // staleness tracker
 
-    // Initial session check via getSession (fast, uses local cache)
-    const init = async () => {
-      try {
-        const { data: { session } } = await client.auth.getSession();
-        if (mounted) {
-          await fetchRole(session?.user ?? null);
-        }
-      } catch {
-        if (mounted) {
-          setUser(null);
-          setRole(null);
-          setLoading(false);
-        }
-      }
-    };
+    function handleAuthChange(authUser: User | null) {
+      if (!mounted) return;
+      const uid = authUser?.id ?? null;
+      currentUid = uid;
 
-    init();
-
-    // Safety timeout — if auth takes more than 5 seconds, stop loading
-    const timeout = setTimeout(() => {
-      if (mounted && loading) {
+      if (!authUser) {
+        setUser(null);
+        setRole(null);
         setLoading(false);
+        return;
       }
-    }, 5000);
 
-    // Listen for auth changes (sign-in, sign-out, token refresh)
-    const { data: listener } = client.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (mounted) {
-          await fetchRole(session?.user ?? null);
+      // Set user immediately so downstream sees authenticated state
+      setUser(authUser);
+
+      // Fetch role in background
+      (async () => {
+        try {
+          const { data: profile, error } = await client
+            .from("profiles")
+            .select("role")
+            .eq("id", authUser.id)
+            .single();
+          if (!mounted || currentUid !== uid) return;
+          if (error) {
+            setRole("user");
+          } else {
+            setRole((profile?.role as AppRole) || "user");
+          }
+        } catch {
+          if (mounted && currentUid === uid) setRole("user");
+        } finally {
+          if (mounted && currentUid === uid) setLoading(false);
         }
+      })();
+    }
+
+    // onAuthStateChange fires INITIAL_SESSION synchronously, then
+    // SIGNED_IN / SIGNED_OUT / TOKEN_REFRESHED as things change.
+    // Callback is NOT async — user state is set synchronously.
+    const { data: listener } = client.auth.onAuthStateChange(
+      (_event, session) => {
+        handleAuthChange(session?.user ?? null);
       },
     );
+
+    // Safety timeout — if nothing fires within 10 s, stop the spinner
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 10000);
 
     return () => {
       mounted = false;
       clearTimeout(timeout);
       listener.subscription.unsubscribe();
     };
-  }, [fetchRole]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>
@@ -115,8 +110,6 @@ export function canAccess(role: AppRole | null, tab: string): boolean {
       return true;
     case "orphans":
       return role === "orphans_admin";
-    case "salaries":
-      return role === "orphans_admin";
     case "sponsors":
       return role === "sponsors_admin";
     case "payments":
@@ -137,8 +130,6 @@ export function canEdit(role: AppRole | null, tab: string): boolean {
   if (role === "super_admin") return true;
   switch (tab) {
     case "orphans":
-      return role === "orphans_admin";
-    case "salaries":
       return role === "orphans_admin";
     case "sponsors":
       return role === "sponsors_admin";

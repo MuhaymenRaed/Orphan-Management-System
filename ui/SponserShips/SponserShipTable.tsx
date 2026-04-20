@@ -11,6 +11,7 @@ interface Sponsorship {
   orphan_name: string;
   sponsorship_type: string;
   start_date: string;
+  end_date: string;
   status: "نشط" | "متوقف";
   note: string;
 }
@@ -114,6 +115,9 @@ function SponsorshipsTableContent() {
             <DataTable.TableHeaderCell className="hidden lg:table-cell">
               البداية
             </DataTable.TableHeaderCell>
+            <DataTable.TableHeaderCell className="hidden lg:table-cell">
+              التوقف
+            </DataTable.TableHeaderCell>
             <DataTable.TableHeaderCell className="text-center">
               الحالة
             </DataTable.TableHeaderCell>
@@ -153,6 +157,10 @@ function SponsorshipsTableContent() {
                 {sponsorship.start_date}
               </DataTable.TableCell>
 
+              <DataTable.TableCell className="hidden lg:table-cell tabular-nums text-[var(--textMuted2)] text-xs">
+                {sponsorship.end_date || "—"}
+              </DataTable.TableCell>
+
               <DataTable.TableCell>
                 <div className="flex justify-center">
                   <span
@@ -185,12 +193,15 @@ function SponsorshipsTableContent() {
                       e.target.style.height = "auto";
                       e.target.style.height = `${e.target.scrollHeight}px`;
                     }}
-                    onBlur={() =>
+                    onBlur={() => {
                       updateNote({
                         id: sponsorship.sponsorship_id,
                         note: notes[sponsorship.sponsorship_id],
-                      })
-                    }
+                        source: sponsorship.sponsorship_id.startsWith("active-")
+                          ? "active"
+                          : "history",
+                      });
+                    }}
                   />
                   <StickyNote
                     size={12}

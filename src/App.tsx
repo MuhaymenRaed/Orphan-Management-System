@@ -1,17 +1,20 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuthUser, canAccess } from "../utils/Supabase/Auth/useAuthUser";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useRealtimeSync } from "../utils/Supabase/useRealtimeSync";
+import { useGlobalSettings } from "../utils/Supabase/useGlobalSettings";
 
 import Orphans from "../pages/Orphans";
 import Sponsors from "../pages/Sponsors";
 import Overview from "../pages/Overview";
 import Settings from "../pages/Settings";
 import SponserShips from "../pages/SponserShips";
-import Salaries from "../pages/Salaries";
+import SponsorPayments from "../pages/Salaries";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
 import Users from "../pages/Users";
 import OrphanReceives from "../pages/OrphanReceives";
+import OrphanageFunds from "../pages/OrphanageFunds";
 import Header from "../ui/Header";
 import Navbar from "../ui/Navbar";
 import { useState } from "react";
@@ -28,7 +31,8 @@ function ProtectedRoute({
 }) {
   const { user, role, loading } = useAuthUser();
 
-  if (loading) return <LoadingSpinner />;
+  // Still loading auth state, or role hasn't resolved yet
+  if (loading || (user && !role)) return <LoadingSpinner />;
   if (!user) return <Navigate to="/signin" replace />;
   if (!canAccess(role, tab))
     return (
@@ -73,6 +77,12 @@ function App() {
     "/reset-password",
     "/verify-email",
   ].includes(location.pathname);
+
+  // Enable realtime sync for all authenticated users
+  useRealtimeSync();
+
+  // Apply saved settings (theme, font size) globally on startup
+  useGlobalSettings();
 
   if (loading) return <LoadingSpinner />;
 
@@ -143,18 +153,26 @@ function App() {
             }
           />
           <Route
-            path="/salaries"
+            path="/sponsor-payments"
             element={
-              <ProtectedRoute tab="salaries">
-                <Salaries />
+              <ProtectedRoute tab="payments">
+                <SponsorPayments />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/payments"
+            path="/orphan-receives"
             element={
-              <ProtectedRoute tab="payments">
+              <ProtectedRoute tab="overview">
                 <OrphanReceives />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orphanage-funds"
+            element={
+              <ProtectedRoute tab="settings">
+                <OrphanageFunds />
               </ProtectedRoute>
             }
           />

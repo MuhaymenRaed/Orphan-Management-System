@@ -340,9 +340,7 @@ export const DataTable = {
     </tr>
   ),
   TableCell: ({ children, className = "" }: TableCellProps) => (
-    <td
-      className={`px-4 py-3.5 whitespace-nowrap text-sm text-[var(--textColor)] ${className}`}
-    >
+    <td className={`px-4 py-3.5 text-sm text-[var(--textColor)] ${className}`}>
       {children}
     </td>
   ),

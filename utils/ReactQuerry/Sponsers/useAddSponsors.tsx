@@ -12,20 +12,16 @@ export function useAddSponsors() {
   } = useMutation({
     mutationFn: addSponsor,
     onSuccess: () => {
-      console.log("✅ Sponsor added - invalidating queries");
       toast.success("تم إضافة الكفيل بنجاح!");
-      // ✅ Invalidate and refetch immediately
-      queryClient.invalidateQueries({
-        queryKey: ["sponsors"],
-      });
-      queryClient.refetchQueries({
-        queryKey: ["sponsors"],
-        type: "active",
-      });
+      queryClient.invalidateQueries({ queryKey: ["sponsors"] });
       queryClient.invalidateQueries({ queryKey: ["sponsorStats"] });
+      queryClient.invalidateQueries({ queryKey: ["sponsorships"] });
+      queryClient.invalidateQueries({ queryKey: ["orphans"] });
+      queryClient.invalidateQueries({ queryKey: ["orphans", "lookup"] });
+      queryClient.invalidateQueries({ queryKey: ["sponsorPayments"] });
     },
     onError: (error) => {
-      console.error("❌ Add sponsor error:", error);
+      console.error(error);
       toast.error("فشل في الإضافة! يرجى التحقق من الاتصال.");
     },
   });

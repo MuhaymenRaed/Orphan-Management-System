@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SquarePen, Trash2, Mail, Phone, UserCheck } from "lucide-react";
 import { useGetSponsors } from "../../utils/ReactQuerry/Sponsers/useGetSponsors";
 import { useDeleteSponsors } from "../../utils/ReactQuerry/Sponsers/useDeleteSponsors";
 import SponsorModal from "./SponsorModal";
 import CheckPopup from "../checkPopup";
 import { DataTable } from "../../components/CompoundTable";
+import { fetchSponsorOrphans } from "../../utils/Supabase/Sponsors/fetchSponsor";
 
 interface Sponsor {
   id: string;
@@ -27,8 +28,8 @@ const SPONSOR_FILTERS = [
 function SponsorsTableContent() {
   const { data, error, isLoading } = useGetSponsors();
   const { deleteSponsorMutate } = useDeleteSponsors();
+  const [loadingEdit, setLoadingEdit] = useState(false);
 
-  // 2. Destructure filterValue from context
   const {
     searchQuery,
     filterValue,
@@ -41,11 +42,9 @@ function SponsorsTableContent() {
 
   const sponsors: Sponsor[] = data?.sponsor || [];
 
-  // 3. Updated Filtering Logic (Search + Dropdown)
   const filteredSponsors = useMemo(() => {
     let result = sponsors;
 
-    // A. Apply Search
     const query = searchQuery.trim().toLowerCase();
     if (query) {
       result = result.filter(
@@ -56,7 +55,6 @@ function SponsorsTableContent() {
       );
     }
 
-    // B. Apply Dropdown Filter
     if (filterValue && filterValue !== "all") {
       switch (filterValue) {
         case "active":
@@ -76,6 +74,27 @@ function SponsorsTableContent() {
     return result;
   }, [sponsors, searchQuery, filterValue]);
 
+  const handleEdit = async (sponsor: Sponsor) => {
+    setLoadingEdit(true);
+    try {
+      // Fetch ALL active orphans from sponsorship table
+      const orphans = await fetchSponsorOrphans(sponsor.id);
+      const currentOrphans = (orphans || []).map((o: any) => ({
+        id: o.id as string,
+        name: o.name as string,
+      }));
+
+      setEditItem({ ...sponsor, currentOrphans });
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error("[handleEdit] fetchSponsorOrphans failed:", err);
+      setEditItem({ ...sponsor, currentOrphans: [] });
+      setIsModalOpen(true);
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
   const handleDelete = (sponsorId: string) => {
     deleteSponsorMutate(sponsorId, {
       onSuccess: () => setDeleteConfirm(null),
@@ -83,7 +102,7 @@ function SponsorsTableContent() {
     });
   };
 
-  if (isLoading) return <DataTable.Loading />;
+  if (isLoading || loadingEdit) return <DataTable.Loading />;
   if (error)
     return <DataTable.Error message="حدث خطأ أثناء تحميل بيانات الكفلاء" />;
 
@@ -91,6 +110,7 @@ function SponsorsTableContent() {
     <>
       <DataTable.ModalWrapper>
         <SponsorModal
+          key={editItem?.id || "create-new"}
           setIsModel={(val) => setIsModalOpen(!!val)}
           onCompleted={() => {
             setEditItem(null);
@@ -205,10 +225,7 @@ function SponsorsTableContent() {
               <DataTable.TableCell>
                 <div className="flex justify-center items-center gap-2 md:gap-4">
                   <button
-                    onClick={() => {
-                      setEditItem(sponsor);
-                      setIsModalOpen(true);
-                    }}
+                    onClick={() => handleEdit(sponsor)}
                     className="p-2 text-[var(--primeColor)] hover:bg-[var(--borderColor)] rounded-lg transition-colors"
                   >
                     <SquarePen size={18} />

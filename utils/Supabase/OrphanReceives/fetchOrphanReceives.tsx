@@ -1,9 +1,9 @@
 import { supabase } from "../supabase";
 
 export async function fetchOrphanReceives() {
-  const { data: orphanReceives, error } = await supabase()
-    .from("orphan_receives_view")
+  const { data, error } = await supabase()
+    .from("orphan_financial_status_view")
     .select("*");
   if (error) throw error;
-  return { orphanReceives };
+  return data;
 }

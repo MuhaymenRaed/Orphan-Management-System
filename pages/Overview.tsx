@@ -1,11 +1,11 @@
 import React from "react";
-import { Users as UsersIcon, DollarSign, Heart, Baby } from "lucide-react";
+import { Users as UsersIcon, CreditCard, Heart, Baby } from "lucide-react";
 import Card from "../components/Card";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useGetOrphans } from "../utils/ReactQuerry/Orphans/useGetOrphans";
 import { useSponsorStats } from "../utils/ReactQuerry/Sponsers/utils";
 import { useGetSponsorships } from "../utils/ReactQuerry/Sponsorships/useGetSponsorships";
-import { useGetSalaries } from "../utils/ReactQuerry/Salaries/useGetSalaries";
+import { useGetSponsorPayments } from "../utils/ReactQuerry/SponsorPayments/useGetSponsorPayments";
 import { useGetUsers } from "../utils/ReactQuerry/Users/useGetUsers";
 import {
   PieChart,
@@ -21,30 +21,20 @@ import {
 } from "recharts";
 
 function Overview() {
-  const {
-    data: orphansData,
-    isLoading: orphansLoading,
-  } = useGetOrphans();
-  const {
-    data: sponsorStats,
-    isLoading: sponsorsLoading,
-  } = useSponsorStats();
-  const {
-    data: sponsorships,
-    isLoading: sponsorshipsLoading,
-  } = useGetSponsorships();
-  const {
-    data: salaries,
-    isLoading: salariesLoading,
-  } = useGetSalaries();
+  const { data: orphansData, isLoading: orphansLoading } = useGetOrphans();
+  const { data: sponsorStats, isLoading: sponsorsLoading } = useSponsorStats();
+  const { data: sponsorships, isLoading: sponsorshipsLoading } =
+    useGetSponsorships();
+  const { data: payments, isLoading: paymentsLoading } =
+    useGetSponsorPayments();
   const { isLoading: usersLoading } = useGetUsers();
 
   // Stats
   const totalOrphans = orphansData?.orphan?.length ?? 0;
   const totalSponsors = sponsorStats?.totalSponsors ?? 0;
   const totalSponsorships = sponsorStats?.totalSponsorships ?? 0;
-  const totalSalaries =
-    salaries?.reduce((sum: any, s: any) => sum + (s.amount ?? 0), 0) ?? 0;
+  const totalPayments =
+    payments?.reduce((sum: any, p: any) => sum + (p.paid_amount ?? 0), 0) ?? 0;
 
   // Urgent cases: orphans with high priority (e.g., >= 80)
   const urgentCases = (orphansData?.orphan || []).filter(
@@ -134,7 +124,7 @@ function Overview() {
     orphansLoading ||
     sponsorsLoading ||
     sponsorshipsLoading ||
-    salariesLoading ||
+    paymentsLoading ||
     usersLoading;
 
   return (
@@ -148,14 +138,14 @@ function Overview() {
             <Card>
               <div className="flex items-center gap-4 w-full">
                 <span className="p-3 bg-[var(--fillColor)] rounded-xl text-[var(--primeColor)]">
-                  <DollarSign size={28} />
+                  <CreditCard size={28} />
                 </span>
                 <div className="flex flex-col items-end text-right gap-1">
                   <span className="text-xs text-[var(--textMuted2)]">
-                    الرواتب الشهرية
+                    دفعات الكفلاء
                   </span>
                   <span className="text-xl font-bold text-[var(--cellTextColor)]">
-                    {totalSalaries.toLocaleString()} دينار عراقي
+                    {totalPayments.toLocaleString()} دينار عراقي
                   </span>
                   <span className="text-xs text-[var(--textMuted2)]">
                     إجمالي هذا الشهر
@@ -309,9 +299,26 @@ function Overview() {
                   (orphan: any, _idx: number) => (
                     <div
                       key={orphan.id}
-                      className="flex flex-row-reverse items-center justify-between bg-[var(--fillColor)] rounded-xl p-4 border border-[var(--borderColor)]/40"
+                      className="flex flex-col sm:flex-row-reverse sm:items-center sm:justify-between gap-2 bg-[var(--fillColor)] rounded-xl p-4 border border-[var(--borderColor)]/40"
                     >
-                      <div className="flex flex-col items-end gap-0.5 text-right">
+                      <div className="flex flex-row-reverse items-center justify-between sm:justify-end gap-3">
+                        {getPriorityBadge(orphan.priority)}
+                        <div className="flex flex-col items-end gap-0.5 text-right sm:hidden">
+                          <span className="font-bold text-sm text-[var(--textColor)]">
+                            {orphan.name}{" "}
+                            <span className="text-[var(--textMuted)] text-xs font-normal">
+                              ({orphan.age} سنة)
+                            </span>
+                          </span>
+                          <span className="text-xs text-[var(--textMuted)]">
+                            {orphan.type ||
+                              orphan.description ||
+                              orphan.residence ||
+                              "—"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="hidden sm:flex flex-col items-end gap-0.5 text-right">
                         <span className="font-bold text-sm text-[var(--textColor)]">
                           {orphan.name}{" "}
                           <span className="text-[var(--textMuted)] text-xs font-normal">
@@ -325,7 +332,6 @@ function Overview() {
                             "—"}
                         </span>
                       </div>
-                      {getPriorityBadge(orphan.priority)}
                     </div>
                   ),
                 )

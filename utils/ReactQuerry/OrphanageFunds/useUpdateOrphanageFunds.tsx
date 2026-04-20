@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSponsorships } from "../../Supabase/Sponsorships/updateSponsorships";
+import { updateOrphanageFundNote } from "../../Supabase/OrphanageFunds/updateOrphanageFundNote";
 import { toast } from "react-hot-toast";
 
-export function useUpdateSponsorships() {
+export function useUpdateOrphanageFundNote() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: updateSponsorships,
+    mutationFn: updateOrphanageFundNote,
     onSuccess: () => {
       toast.success("تم حفظ الملاحظة بنجاح");
-      queryClient.invalidateQueries({ queryKey: ["sponsorships"] });
+      queryClient.invalidateQueries({ queryKey: ["orphanageFunds"] });
     },
     onError: (error) => {
       toast.error("فشل في حفظ الملاحظة!");
@@ -20,6 +20,5 @@ export function useUpdateSponsorships() {
   return {
     updateNote: mutation.mutate,
     isUpdating: mutation.isPending,
-    isError: mutation.error,
   };
 }

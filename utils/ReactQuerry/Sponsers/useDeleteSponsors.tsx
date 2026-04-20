@@ -11,9 +11,13 @@ export function useDeleteSponsors() {
       toast.success("تم حذف الكفيل بنجاح!");
       queryClient.invalidateQueries({
         queryKey: ["sponsors"],
-        exact: false, // allow partial match
+        exact: false,
       });
       queryClient.invalidateQueries({ queryKey: ["sponsorStats"] });
+      queryClient.invalidateQueries({ queryKey: ["sponsorships"] });
+      queryClient.invalidateQueries({ queryKey: ["orphans"] });
+      queryClient.invalidateQueries({ queryKey: ["orphans", "lookup"] });
+      queryClient.invalidateQueries({ queryKey: ["sponsorPayments"] });
     },
     onError: (error) => {
       console.error("❌ Delete sponsor error:", error);

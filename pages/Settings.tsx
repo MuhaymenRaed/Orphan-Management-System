@@ -48,7 +48,7 @@ function Settings() {
       if (settings.theme_mode) {
         setTheme(settings.theme_mode);
       }
-      setShowUnsponsoredFirst(settings.show_unsp ?? true);
+      setShowUnsponsoredFirst(settings.show_unsponsored_first ?? true);
       setPrioritySort(settings.priority_sort ?? true);
       setWeeklyReport(settings.weekly_report ?? false);
       setEmailNotif(settings.email_notif ?? true);
@@ -61,10 +61,11 @@ function Settings() {
 
   const handleSave = () => {
     const payload = {
-      id: settings?.id || 1,
+      id: settings?.id,
       font_size: fontSize,
+      language: settings?.language || "ar",
       theme_mode: theme,
-      show_unsp: showUnsponsoredFirst,
+      show_unsponsored_first: showUnsponsoredFirst,
       priority_sort: prioritySort,
       weekly_report: weeklyReport,
       email_notif: emailNotif,
@@ -73,6 +74,8 @@ function Settings() {
       urgent_notif: urgentNotif,
       email,
     };
+    console.log("Settings payload:", payload);
+    console.log("Settings from DB:", settings);
     updateSettingsMutation.mutate(payload, {
       onSuccess: () => toast.success("تم حفظ الإعدادات بنجاح"),
       onError: () => toast.error("حدث خطأ أثناء حفظ الإعدادات"),
@@ -90,7 +93,9 @@ function Settings() {
       await sendTestEmail(email.trim());
       toast.success("تم إرسال بريد الاختبار بنجاح");
     } catch {
-      toast.error("فشل إرسال البريد — تحقق من إعداد Edge Function (send-email) في Supabase");
+      toast.error(
+        "فشل إرسال البريد — تحقق من إعداد Edge Function (send-email) في Supabase",
+      );
     } finally {
       setSendingTest(false);
     }
@@ -304,10 +309,18 @@ function Settings() {
             </p>
             <div className="flex flex-col gap-5">
               {criteria.map((c, i) => (
-                <div key={c.label} className="flex items-center gap-3 w-full">
-                  <span className="w-40 text-right text-sm shrink-0">
-                    {c.label}
-                  </span>
+                <div
+                  key={c.label}
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full"
+                >
+                  <div className="flex items-center justify-between sm:justify-start gap-2">
+                    <span className="w-auto sm:w-36 text-right text-sm shrink-0">
+                      {c.label}
+                    </span>
+                    <span className="sm:hidden text-xs font-bold text-[var(--primeColor)]">
+                      {c.value} نقطة
+                    </span>
+                  </div>
                   <Slider
                     value={c.value}
                     min={0}
@@ -320,7 +333,7 @@ function Settings() {
                     }}
                     className="flex-1"
                   />
-                  <span className="w-16 text-left text-xs font-bold text-[var(--primeColor)]">
+                  <span className="hidden sm:block w-16 text-left text-xs font-bold text-[var(--primeColor)]">
                     {c.value} نقطة
                   </span>
                 </div>

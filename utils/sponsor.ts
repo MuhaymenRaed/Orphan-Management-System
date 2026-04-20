@@ -2,29 +2,25 @@
 
 /* ===== Form data (Modal / UI) ===== */
 export type SponsorFormData = {
-  orphanId: string;
+  orphanIds: string[];
   fullName: string;
   phone: string;
   email?: string;
   sponsorshipType?: string;
-  sponsorshipCount?: string;
   status: string;
-  isDeleted: boolean;
 };
 
-/* ===== API payload ===== */
+/* ===== DB-ready payload for sponsor table ===== */
 export type SponsorPayload = {
-  orphanId: string;
+  orphan_id?: string | null;
   name: string;
   phone: string;
   email?: string | null;
-  sponsorshipType?: string;
-  sponsorshipCount?: string | undefined;
+  sponsorship_type?: string;
   status?: string;
-  note?: string;
 };
 
 /* ===== Update payload ===== */
 export type UpdateSponsorPayload = SponsorPayload & {
-  id: number;
+  id: string;
 };

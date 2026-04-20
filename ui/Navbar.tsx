@@ -1,18 +1,17 @@
 import {
   Baby,
   CreditCard,
-  DollarSign,
   Heart,
   Home,
   Settings,
   Users,
   Eye,
+  Landmark,
 } from "lucide-react";
 import MyIcon from "../components/MyIcon";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { useAuthUser, canAccess } from "../utils/Supabase/Auth/useAuthUser";
 
 type NavbarProps = {
   isOpen: boolean;
@@ -30,32 +29,28 @@ const navItems = [
     tab: "sponsorships",
   },
   {
-    icon: DollarSign,
-    label: "الرواتب الشهرية",
-    path: "/salaries",
-    tab: "salaries",
-  },
-  {
     icon: CreditCard,
     label: "دفعات الكفلاء",
-    path: "/payments",
+    path: "/sponsor-payments",
     tab: "payments",
   },
   {
     icon: Eye,
-    label: "بيانات اليتامى",
+    label: "استلامات الأيتام",
     path: "/orphan-receives",
     tab: "overview",
+  },
+  {
+    icon: Landmark,
+    label: "صندوق الدار",
+    path: "/orphanage-funds",
+    tab: "settings",
   },
   { icon: Users, label: "المستخدمون", path: "/users", tab: "users" },
   { icon: Settings, label: "الإعدادات", path: "/settings", tab: "settings" },
 ];
 
 export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
-  const { role } = useAuthUser();
-
-  const visibleItems = navItems.filter((item) => canAccess(role, item.tab));
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -91,7 +86,7 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
 
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1.5 custom-scrollbar">
-              {visibleItems.map((item, index) => (
+              {navItems.map((item, index) => (
                 <motion.div
                   key={item.path}
                   initial={{ opacity: 0, x: 20 }}

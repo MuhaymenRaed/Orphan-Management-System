@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, UserPlus, UserPen } from "lucide-react";
+import { X, UserPlus, UserPen, ShieldCheck } from "lucide-react";
 
 interface UserModalProps {
   open: boolean;
@@ -47,7 +47,7 @@ export default function UserModal({
 
   return (
     <div
-      className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-0 md:p-4 animate-fadeIn"
       style={{ backgroundColor: "rgba(22, 31, 44, 0.5)" }}
       onClick={onClose}
     >
@@ -55,7 +55,7 @@ export default function UserModal({
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
         dir="rtl"
-        className="rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-slideUp border"
+        className="rounded-t-2xl md:rounded-2xl shadow-2xl max-w-md w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto flex flex-col animate-slideUp border"
         style={{
           backgroundColor: "var(--fillColor)",
           borderColor: "var(--borderColor)",
@@ -105,9 +105,9 @@ export default function UserModal({
               onChange={handleChange}
               placeholder="الاسم الكامل"
               required
-              className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30"
+              className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30 focus:border-[var(--primeColor)]"
               style={{
-                backgroundColor: "var(--bgColor)",
+                backgroundColor: "var(--backgroundColor)",
                 borderColor: "var(--borderColor)",
                 color: "var(--textColor)",
               }}
@@ -124,38 +124,43 @@ export default function UserModal({
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="البريد الإلكتروني"
+              placeholder="example@mail.com"
               type="email"
               required
-              className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30"
+              dir="ltr"
+              className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30 focus:border-[var(--primeColor)]"
               style={{
-                backgroundColor: "var(--bgColor)",
+                backgroundColor: "var(--backgroundColor)",
                 borderColor: "var(--borderColor)",
                 color: "var(--textColor)",
               }}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label
-                className="text-xs font-medium"
+                className="flex items-center gap-1 text-xs font-medium"
                 style={{ color: "var(--textMuted2)" }}
               >
+                <ShieldCheck size={12} />
                 الدور
               </label>
               <select
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30"
+                className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30 focus:border-[var(--primeColor)]"
                 style={{
-                  backgroundColor: "var(--bgColor)",
+                  backgroundColor: "var(--backgroundColor)",
                   borderColor: "var(--borderColor)",
                   color: "var(--textColor)",
                 }}
               >
                 <option value="user">مستخدم</option>
                 <option value="admin">مشرف</option>
+                <option value="super_admin">مدير عام</option>
+                <option value="orphans_admin">مسؤول الأيتام</option>
+                <option value="sponsors_admin">مسؤول الكفلاء</option>
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -169,9 +174,9 @@ export default function UserModal({
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30"
+                className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none transition-all focus:ring-2 focus:ring-[var(--primeColor)]/30 focus:border-[var(--primeColor)]"
                 style={{
-                  backgroundColor: "var(--bgColor)",
+                  backgroundColor: "var(--backgroundColor)",
                   borderColor: "var(--borderColor)",
                   color: "var(--textColor)",
                 }}
@@ -185,26 +190,27 @@ export default function UserModal({
 
         {/* Footer */}
         <div
-          className="px-6 py-4 flex gap-3 border-t"
+          className="px-6 py-4 flex flex-col-reverse sm:flex-row gap-3 border-t mt-auto"
           style={{ borderColor: "var(--borderColor)" }}
         >
           <button
-            type="submit"
-            className="flex-1 font-semibold py-2.5 px-6 rounded-xl text-white text-sm transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-            style={{ backgroundColor: "var(--primeColor)" }}
-          >
-            {initialData ? "تحديث" : "إضافة"}
-          </button>
-          <button
             type="button"
             onClick={onClose}
-            className="flex-1 font-semibold py-2.5 px-6 rounded-xl border-2 text-sm transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 font-semibold py-2.5 px-6 rounded-xl border text-sm transition-all"
             style={{
               borderColor: "var(--borderColor)",
               color: "var(--textColor)",
+              backgroundColor: "var(--backgroundColor)",
             }}
           >
             إلغاء
+          </button>
+          <button
+            type="submit"
+            className="flex-1 font-semibold py-2.5 px-6 rounded-xl text-white text-sm transition-all hover:brightness-105"
+            style={{ backgroundColor: "var(--primeColor)" }}
+          >
+            {initialData ? "تحديث" : "إضافة"}
           </button>
         </div>
       </form>
