@@ -3,7 +3,7 @@ import { SquarePen, Trash2, Mail, Phone, UserCheck } from "lucide-react";
 import { useGetSponsors } from "../../utils/ReactQuerry/Sponsers/useGetSponsors";
 import { useDeleteSponsors } from "../../utils/ReactQuerry/Sponsers/useDeleteSponsors";
 import SponsorModal from "./SponsorModal";
-import CheckPopup from "../checkPopup";
+import { CheckPopup } from "../CheckPopup";
 import { DataTable } from "../../components/CompoundTable";
 import { fetchSponsorOrphans } from "../../utils/Supabase/Sponsors/fetchSponsor";
 

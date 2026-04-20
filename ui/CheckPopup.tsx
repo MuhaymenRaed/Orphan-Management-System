@@ -1,6 +1,6 @@
 import { X, AlertTriangle } from "lucide-react";
 
-export default function CheckPopup({
+export function CheckPopup({
   onClick,
   onCancel,
 }: {

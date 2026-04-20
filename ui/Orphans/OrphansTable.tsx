@@ -3,7 +3,7 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { useGetOrphans } from "../../utils/ReactQuerry/Orphans/useGetOrphans";
 import { useDeleteOrphans } from "../../utils/ReactQuerry/Orphans/useDeleteOrphans";
 import OrphanModal from "./OrphanModal";
-import CheckPopup from "../checkPopup";
+import { CheckPopup } from "../CheckPopup";
 import { DataTable } from "../../components/CompoundTable";
 
 // Priority color function

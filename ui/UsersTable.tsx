@@ -5,7 +5,7 @@ import { useAddUser } from "../utils/ReactQuerry/Users/useAddUser";
 import { useUpdateUser } from "../utils/ReactQuerry/Users/useUpdateUser";
 import { useDeleteUser } from "../utils/ReactQuerry/Users/useDeleteUser";
 import UserModal from "./UserModal";
-import CheckPopup from "./checkPopup";
+import { CheckPopup } from "./CheckPopup";
 import { SquarePen, Trash2, Mail, UserCheck, ShieldCheck } from "lucide-react";
 
 const FILTER_OPTIONS = [
